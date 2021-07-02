@@ -6,7 +6,7 @@ I have successfully used this on Pop!_OS/Ubuntu 20.04 LTS, using the Edimax BT-8
 
 ## Instructions
 
-1. Run this in Chrome
+1. Open index.html in Chrome
 1. Open chrome://flags in a new tab
 1. Enable "Experimental Web Platform features" to activate Bluetooth API functionality. You may need to restart Chrome
 1. Make sure your PineTime is on and the display is on
