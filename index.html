@@ -1,0 +1,62 @@
+<html>
+
+<body>
+    <h2>Sync the time to your PineTime running InfiniTime</h2>
+    <p>I have successfully tested this on Pop!_OS 20.04 LTS, using the Edimax BT-8500 USB adapter (I compiled the kernel module from their website).</p>
+    <ol>
+        <li>Run this in Chrome</li>
+        <li>Open <strong>chrome://flags</strong> in a new tab</li>
+        <li>Enable "Experimental Web Platform features" to activate Bluetooth API functionality. You may need to restart Chrome</li>
+        <li>Make sure your PineTime is on and the display is on</li>
+        <li>Press the Sync button</li>
+        <li>A dialog will pop up, after 5 seconds you should see your InfiniTime device appear. You may need to restart your PineTime if you don't see it</li>
+        <li>Select your device and click Pair</li>
+        <li>After about 10 seconds the time should be synced ... check your PineTime!</li>
+    </ol>
+    <button id="sync">Sync</button>
+    <script>
+        let timeServiceId = 0x1805; // the standard id of the "Current Time Service" Bluetooth service
+        let characteristicId = 0x2a2b; // Not sure what this characteristic is
+        async function setTime() {
+            const device = await navigator.bluetooth.requestDevice({
+                filters: [
+                    { services: [timeServiceId] },
+                    { namePrefix: 'Infini' }
+                ]
+            });
+            const server = await device.gatt.connect();
+            const service = await server.getPrimaryService(timeServiceId);
+            const characteristic = await service.getCharacteristic(characteristicId);
+
+            // We'll construct and send an ArrayBuffer of 9 bytes with the time info
+            let out = new Uint8Array(9);
+            let d = new Date();
+            // These three lines help us convert a year into 2 bytes
+            let year = new Int16Array(1);
+            year[0] = d.getFullYear();
+            let yearBytes = new Uint8Array(year.buffer);
+            out[0] = yearBytes[0];
+            out[1] = yearBytes[1];
+            out[2] = d.getMonth() + 1;
+            out[3] = d.getDate();
+            out[4] = d.getHours();
+            out[5] = d.getMinutes();
+            out[6] = d.getSeconds();
+            out[7] = d.getDay();
+            out[8] = 0;
+
+            const resp = await characteristic.writeValueWithResponse(out.buffer);
+
+            server.disconnect();
+            
+            alert('Done! Check your PineTime');
+
+        }
+        let sync = document.getElementById('sync');
+        sync.addEventListener('click', function () {
+            setTime();
+        });
+    </script>
+</body>
+
+</html>
