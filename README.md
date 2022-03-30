@@ -4,6 +4,8 @@ Sync the time on your PineTime from Chrome over Bluetooth LE.
 
 I have successfully used this on Pop!_OS/Ubuntu 20.04 LTS, using the Bluetooth 4.0 USB adapter from ThinkPenguin and with the Edimax BT-8500 USB adapter (I compiled the kernel module from their website).
 
+Successfully used on Linux Mint 20.3 with Vivaldi and an AX210 adapter.
+
 ## Instructions
 
 1. Open index.html in Chrome
